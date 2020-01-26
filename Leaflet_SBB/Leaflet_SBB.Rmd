@@ -61,7 +61,8 @@ library(dplyr)
 zurich <- all %>%
   filter(!is.na(avDurToZh) &
            population < 5000 &
-           toZhAnyDay != 0) %>%
+           toZhAnyDay != 0 &
+           name != "Zurich") %>%
   mutate(color = ifelse(toZhAnyDay > 3, "green", ifelse(toZhAnyDay > 2,"orange", "red"))) %>%
   mutate(inverseDuration = round((0 - avDurToZh + 130),2),
          avDurToZh = round(avDurToZh,2),
@@ -93,7 +94,8 @@ library(dplyr)
 bern <- all %>%
   filter(!is.na(avDurToBern) &
            population < 5000 &
-           toBernAnyDay != 0) %>%
+           toBernAnyDay != 0 &
+           name != "Bern") %>%
   mutate(color = ifelse(toBernAnyDay > 3, "green", ifelse(toBernAnyDay > 2,"orange", "red"))) %>%
   mutate(inverseDuration = round((0 - avDurToBern + 130),2),
          avDurToBern = round(avDurToBern,2),
