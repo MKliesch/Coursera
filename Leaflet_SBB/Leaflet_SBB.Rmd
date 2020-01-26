@@ -1,7 +1,7 @@
 ---
 title: "Places to live and commute in Switzerland"
 author: "M. Kliesch"
-date: "1/24/2020"
+date: "1/26/2020"
 output: html_document
 ---
 
@@ -11,10 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load, echo = F}
 library(leaflet)
+
+# load data
+all <- read.csv(file = "dfComplete.csv", header = T)
+
 ```
 
 # General Information
-Switzerland is famous for its mountains, lakes, and, among many other things, its well-functioning public transport. However, public transport is only ever as good as its connection to the remotest places. So I was wondering, if you want to live in the countryside, how many places are there in Switzerland that are small (in population size) and still well connected to the two major cities Zurich and Bern? How many trains per hour go to Zurich/Bern and how long do they take to get there?
+Switzerland is famous for its mountains, lakes, and, among many other things, its well-functioning public transport. However, public transport is only as good as its connection to the remotest places. So if you want to live in the Swiss countryside, how many places are there in Switzerland that are small (in population size) and still well connected to the two major cities Zurich and Bern? How many trains per hour go to Zurich/Bern and how long do they take to get there?
 
 
 # The Dataset  {.tabset}
@@ -24,60 +28,86 @@ The dataset contains information about population size and public transport conn
 The dataset consists of `r nrow(all)` rows and `r ncol(all)` columns with the following column names:
 
 ```{r colnames, echo = F}
-allData <- as.data.frame(allData)
-
-str(allData)
+str(all)
 ```
 
 ## Data description
 
-* `userCode` - ID of the participan
-...
+* `name` - name of the town/village
+* `lat` - latitude of the town/village
+* `lng` - longitude of the town/village
+* `population` - population size
+* `toBernPerHMon` - number of connections to Bern per hour on a Monday
+* `toZhPerHTue` - number of connections to Zurich per hour on a Tuesday
+* ... and so on
+* `toBernAnyDay` - number of connections to Zurich per hour on average
+* `avDurToZh` - average duration to Zurich
+* `avDurToBern` - average duration to Bern
+
 
 ## Example data
 
 ```{r head, echo = F}
-head(allData)
+head(all)
 ```
 
-# The Plots
+# Trains to Zurich
 
-```{r Zurich, echo = F}
-#all$color ...
+(showing places with population size < 5000)
+```{r Zurich, echo = F, message = F, error = F, warning = F}
+library(dplyr)
 
-all %>% 
-  leaflet() %>% # make a map
-  addTiles() %>% # brings in mapping data
-  addCircles(radius = 10, popup = paste(all$name, paste("Size: ", all$population), paste("Trains to Zurich per h: ", all$toZhPerHAny), paste("Av. commute time: ", all$durationToZh), sep = "\n"))
+# make a preselection of dataset
+zurich <- all %>%
+  filter(!is.na(avDurToZh) &
+           population < 5000 &
+           toZhAnyDay != 0) %>%
+  mutate(color = ifelse(toZhAnyDay > 3, "green", ifelse(toZhAnyDay > 2,"orange", "red"))) %>%
+  mutate(inverseDuration = round((0 - avDurToZh + 130),2),
+         avDurToZh = round(avDurToZh,2),
+         population = round(population),
+         toZhAnyDay = round(toZhAnyDay, 2))
+
+
+zurich %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(color = zurich$color, lng = zurich$lng, lat = zurich$lat,
+             radius = 10, weight = sqrt(zurich$inverseDuration)*5,
+             popup = paste(zurich$name, paste(". Size:", zurich$population), paste(". Trains to Zurich per h:",
+                                                                            zurich$toZhAnyDay), 
+                           paste(". Av. commute time:", zurich$avDurToZh, " min."))) %>%
+  addLegend(labels = c("> 3x per hour", "> 2x per hour", "< 2x per hour"), colors = c("green", "orange", "red")) %>%
+  addLegend(position = "bottomright", labels = c("Larger Dots = Faster Connection"), colors = "black")
 
 ```
 
-```{r Bern, echo = F}
-#all$color ...
 
-all %>% 
-  leaflet() %>% # make a map
-  addTiles() %>% # brings in mapping data
-  addCircles(radius = 10, popup = paste(all$name, paste("Size: ", all$population), paste("Trains to Bern per h: ", all$toBePerHAny), paste("Av. commute time: ", all$durationToBe), sep = "\n"))
+# Trains to Bern
 
-```
+(showing places with population size < 5000)
+```{r Bern, echo = F, message = F, error = F, warning = F}
+library(dplyr)
 
-## R Markdown
+# make a preselection of dataset
+bern <- all %>%
+  filter(!is.na(avDurToBern) &
+           population < 5000 &
+           toBernAnyDay != 0) %>%
+  mutate(color = ifelse(toBernAnyDay > 3, "green", ifelse(toBernAnyDay > 2,"orange", "red"))) %>%
+  mutate(inverseDuration = round((0 - avDurToBern + 130),2),
+         avDurToBern = round(avDurToBern,2),
+         population = round(population),
+         toBernAnyDay = round(toBernAnyDay, 2))
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+bern %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(color = bern$color, lng = bern$lng, lat = bern$lat,
+             radius = 10, weight = sqrt(bern$inverseDuration)*5,
+             popup = paste(bern$name, paste(". Size:", bern$population), paste(". Trains to bern per h:",
+                                                                            bern$toBernAnyDay), 
+                           paste(". Av. commute time:", bern$avDurToBern, " min."))) %>%
+  addLegend(labels = c("> 3x per hour", "> 2x per hour", "< 2x per hour"), colors = c("green", "orange", "red")) %>%
+  addLegend(position = "bottomright", labels = c("Larger Dots = Faster Connection"), colors = "black")
