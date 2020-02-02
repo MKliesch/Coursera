@@ -69,7 +69,7 @@ zurich <- all %>%
          population = round(population),
          toZhAnyDay = round(toZhAnyDay, 2))
 
-
+# Plot with leaflet
 zurich %>%
   leaflet() %>%
   addTiles() %>%

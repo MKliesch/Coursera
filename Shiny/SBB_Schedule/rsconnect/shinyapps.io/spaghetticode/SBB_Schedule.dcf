@@ -1,0 +1,12 @@
+name: SBB_Schedule
+title: SBB_Schedule
+username:
+account: spaghetticode
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1747860
+bundleId: 2769330
+url: https://spaghetticode.shinyapps.io/SBB_Schedule/
+when: 1580645031.51002
+asMultiple: FALSE
+asStatic: FALSE
