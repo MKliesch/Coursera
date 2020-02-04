@@ -89,7 +89,7 @@ shinyServer(function(input, output) {
                     leaflet() %>%
                     addTiles() %>%
                     addCircles(lng = df$lng, lat = df$lat,
-                               radius = 10, weight = 5,
+                               radius = 10, weight = 20,
                                color = ~ pal(avDur),
                                popup = paste(df$name, paste(". Size:", df$population), paste(". Trains to", city, "per h:",
                                                                                              df$ThisNPerHour), 

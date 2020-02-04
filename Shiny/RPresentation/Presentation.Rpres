@@ -1,28 +1,60 @@
-Presentation
+Shiny Work & Travel App Switzerland
 ========================================================
-author: Me
-date: 
+author: M.Kliesch
+date: 04/02/2020
 autosize: true
 
-First Slide
+Introduction
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+Do you want to live in Switzerland because of its mountains, lakes and green forests, but happen to work in one of the major cities?
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+The "Shiny Work & Travel App Switzerland" is your friend. It helps you locate suitable towns and villages in Switzerland that are limited in population size but still have direct public transport connections to Bern or Zurich.
 
-Slide With Code
+The Dataset
 ========================================================
 
-```{r}
-summary(cars)
+The dataset used for the app is based on 
+> 1. the last national census of Switzerland and 
+> 2. the most recent public transport schedule provided by the Swiss SBB federal railway. 
+
+It was modified to show the number of connections per hour to Zurich/Bern and the average duration it takes to reach them.
+
+The Dataset II
+========================================================
+```{r modify_dat, echo = F}
+library(dplyr)
+library(imager)
+
+data <- read.csv("data/dfComplete.csv")
+dat <- data %>%
+  filter(name %in% c("Luzern", "Langenthal", "Trubschachen", "Richterswil")) %>%
+  select(name, lat, lng, population, toZhPerHMon, toBernPerHMon, avDurToZh, avDurToBern)
+
 ```
 
-Slide With Plot
+<small>
+``` {r, echo = T, comment = F}
+str(dat)
+```
+</small>
+
+Example
 ========================================================
 
-```{r, echo=FALSE}
-plot(cars)
-```
+This is what the app will return when looking for villages with fewer than 2000 inhabitants that have direct connections to Bern:
+
+<div style="float: left;">
+<img src="Presentation-figure/select.png" alt="select" height="400"/>
+</div>
+
+<div style="float: right;">
+<img src="Presentation-figure/output.png" alt="output" height="400"/>
+</div>
+
+Link to the App
+========================================================
+
+This is where you can test the Work & Travel App Switzerland:
+
+<a href="https://spaghetticode.shinyapps.io/SBB_Schedule/"> https://spaghetticode.shinyapps.io/SBB_Schedule/</a>
