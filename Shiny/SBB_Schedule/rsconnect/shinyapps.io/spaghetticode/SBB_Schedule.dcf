@@ -5,8 +5,8 @@ account: spaghetticode
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1747860
-bundleId: 2769330
+bundleId: 2772062
 url: https://spaghetticode.shinyapps.io/SBB_Schedule/
-when: 1580645031.51002
+when: 1580753432.94283
 asMultiple: FALSE
 asStatic: FALSE

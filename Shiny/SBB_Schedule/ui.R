@@ -23,7 +23,7 @@ shinyUI(fluidPage(
                         "Population Size:",
                         min = 1,
                         max = 396955,
-                        value = c(1,5000)),
+                        value = c(1,10000)),
             sliderInput("nConn",
                         "Number of Connections Per Hour:",
                         min = 0,
@@ -81,7 +81,8 @@ shinyUI(fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             leafletOutput("distPlot"),
-            textOutput("testText")
+            textOutput("testText"),
+            includeHTML("instructions.html")
         )
     )
 ))
